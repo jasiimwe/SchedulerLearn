@@ -8,6 +8,10 @@ namespace ScheduleLearnApi.Models.Interfaces
         IDirectorRepository DirectorRepository { get; }
 
         IHealthCenterRepository HealthCenterRepository { get; }
+
+        IDivisionRepository DivisionRepository { get; }
+        IWardRepository WardRepository { get; }
+        IUserRepository UserRepository { get; }
         Task CompleteAsync();
     }
 }

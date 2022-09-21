@@ -17,6 +17,10 @@ namespace ScheduleLearnApi.Models.Persistent
 
         public IHealthCenterRepository HealthCenterRepository => new HealthCenterRepository(_context);
 
+        public IDivisionRepository DivisionRepository => new DivisionRepository(_context);
+        public IWardRepository WardRepository => new WardRepository(_context);
+        public IUserRepository UserRepository => new UserRepository(_context);
+
         public async Task CompleteAsync()
         {
             await _context.SaveChangesAsync();

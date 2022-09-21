@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ScheduleLearnApi.Models.Persistent;
 
@@ -10,9 +11,10 @@ using ScheduleLearnApi.Models.Persistent;
 namespace ScheduleLearnApi.Migrations
 {
     [DbContext(typeof(SchedulerContext))]
-    partial class SchedulerContextModelSnapshot : ModelSnapshot
+    [Migration("20220921075215_AddedDivisionModule")]
+    partial class AddedDivisionModule
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.8");
@@ -107,103 +109,6 @@ namespace ScheduleLearnApi.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("HealthCenter");
-                });
-
-            modelBuilder.Entity("ScheduleLearnApi.Models.User", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("AccountId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Address")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("CenterId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Contact")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("DoB")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Email")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("FirstName")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Gender")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("HeighestLvlEducaTION")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("LastName")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("MaritalStatus")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("MedicalIssues")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Profession")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("WardId")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("User");
-                });
-
-            modelBuilder.Entity("ScheduleLearnApi.Models.Ward", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("CenterId")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("DivisionId")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("InchargeId")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("MaximumHoursAday")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("MinimunHoursAday")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("NumberOfWorkers")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Ward");
                 });
 #pragma warning restore 612, 618
         }
