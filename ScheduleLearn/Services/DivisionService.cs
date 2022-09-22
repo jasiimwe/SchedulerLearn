@@ -22,7 +22,7 @@ namespace ScheduleLearnApi.Services
 
             var _divsion = new Division
             {
-                Id = Guid.NewGuid().ToString(),
+                DivisionId = Guid.NewGuid().ToString(),
                 Name = division.Name,
                 HealthCenterId = division.HealthCenterId,
 

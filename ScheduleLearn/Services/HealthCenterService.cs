@@ -27,10 +27,10 @@ namespace ScheduleLearnApi.Services
 
             var _healthCenter = new HealthCenter
             {
-                Id = Guid.NewGuid().ToString(),
+                HealthCenterId = Guid.NewGuid().ToString(),
                 Name = healthCenter.Name,
                 Address = healthCenter.Address,
-                Director = healthCenter.Director,
+                DirectorId = healthCenter.DirectorId,
                 CreatedOn = DateTime.UtcNow
             };
 
@@ -51,7 +51,7 @@ namespace ScheduleLearnApi.Services
 
         public async Task<ApiResponse<HealthCenter>> DeleteHealthCenterAsync(HealthCenter healthCenter)
         {
-            var isHealthCenter = await _unit.HealthCenterRepository.GetById(healthCenter.Id);
+            var isHealthCenter = await _unit.HealthCenterRepository.GetById(healthCenter.HealthCenterId);
             if (isHealthCenter != null)
                 return new ApiResponse<HealthCenter>("Health Center Already Exists");
             try
@@ -100,13 +100,13 @@ namespace ScheduleLearnApi.Services
 
         public async Task<ApiResponse<HealthCenter>> UpdateHealthCenterAsync(HealthCenter healthCenter)
         {
-            var isHealthCenter = await _unit.HealthCenterRepository.GetById(healthCenter.Id);
+            var isHealthCenter = await _unit.HealthCenterRepository.GetById(healthCenter.HealthCenterId);
             if (isHealthCenter == null)
                 return new ApiResponse<HealthCenter>("Health Center Doesn't Exist");
 
             isHealthCenter.Name = healthCenter.Name;
             isHealthCenter.Address = healthCenter.Address;
-            isHealthCenter.Director = healthCenter.Director;
+            isHealthCenter.DirectorId = healthCenter.DirectorId;
             try
             {
                 _unit.HealthCenterRepository.Update(healthCenter);

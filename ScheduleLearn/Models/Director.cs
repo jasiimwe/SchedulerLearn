@@ -8,8 +8,10 @@ namespace ScheduleLearnApi.Models
     [Table("Director")]
     public class Director
     {
+        [System.ComponentModel.DataAnnotations.Key]
+        public string DirectorId { get; set; }
         
-        public string Id { get; set; }
+        [ForeignKey("AccountId")]
         public string AccountId { get; set; }
         public string Name { get; set; }
 

@@ -1,12 +1,14 @@
-﻿namespace ScheduleLearnApi.Models.Interfaces.Service
+﻿using ScheduleLearnApi.Models.Responses;
+
+namespace ScheduleLearnApi.Models.Interfaces.Service
 {
     public interface IDirector
     {
-        Task<(Director director, string message, bool check)> GetAsync(string id);
-        Task<(IEnumerable<Director> directors, string message, bool check)> GetAsync();
-        Task<(Director director, string message, bool check)> UpdateAsync(string name, DateTime dob, bool isDeleted);
-        (string message, bool check) Delete(Director director);
+        Task<ApiResponse<Director>> GetAsync(string id);
+        Task<ApiResponse<IEnumerable<Director>>> GetAsync();
+        Task<ApiResponse<Director>> UpdateAsync(string name, DateTime dob, bool isDeleted);
+        Task<ApiResponse<Director>> Delete(string id);
 
-        Task<(Director director, string message, bool check)> AddAsync(Director director);
+        Task<ApiResponse<Director>> AddAsync(Director director);
     }
 }

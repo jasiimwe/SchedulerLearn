@@ -17,6 +17,9 @@ namespace ScheduleLearnApi.Models.Persistent
         public DbSet<User> Users { get; set; }
 
         public DbSet<Ward> Wards { get; set; }
+        public DbSet<NextOfKin> NextOfKin { get; set; }
+        public DbSet<Shift> Shifts { get; set; }
+        public DbSet<HistoryShift> HistoryShifts { get; set; }
 
     }
 }

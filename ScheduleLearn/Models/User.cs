@@ -7,21 +7,25 @@ namespace ScheduleLearnApi.Models
     public class User
     {
         [Key]
-        public string Id { get; set; } = Guid.NewGuid().ToString();
+        public string UserId { get; set; } = Guid.NewGuid().ToString();
 
         /// <summary>
         /// 
         /// </summary>
+        [ForeignKey("AccountId")]
         public string? AccountId { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
+        [ForeignKey("WardId")]
         public string? WardId { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
+        /// 
+        [ForeignKey("CreatedId")]
         public string? CenterId { get; set; }
 
         /// <summary>

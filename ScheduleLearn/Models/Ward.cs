@@ -12,15 +12,18 @@ namespace ScheduleLearnApi.Models
         /// <summary>
         /// 
         /// </summary>
+        [ForeignKey("DivisionId")]
         public string DivisionId { get; set; }
         /// <summary>
         /// 
         /// </summary>
+        [ForeignKey("HealthCenterId")]
         public string CenterId { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
+        [ForeignKey("DivisonId")]
         public string InchargeId { get; set; }
 
         /// <summary>

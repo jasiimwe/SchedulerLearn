@@ -5,6 +5,7 @@ using ScheduleLearnApi.Models;
 using ScheduleLearnApi.Models.Interfaces.Service;
 using ScheduleLearnApi.Services;
 using ScheduleLearnApi.Utils;
+using System.Drawing.Printing;
 
 namespace ScheduleLearnApi.Controllers
 {
@@ -28,7 +29,7 @@ namespace ScheduleLearnApi.Controllers
             
             var _login = await _accountService.LoginAsync(email, password);
 
-            return Ok(new {_login.account, _login.message, _login.check});
+            return Ok(_login);
         }
         
 
@@ -50,7 +51,7 @@ namespace ScheduleLearnApi.Controllers
             
             
             
-            return Ok(new { _account.account, _account.message, _account.check });
+            return Ok(_account);
         }
 
         
@@ -78,7 +79,7 @@ namespace ScheduleLearnApi.Controllers
             var _account = await _accountService.UpdatePasswordAsync(id, newPassword);
             
 
-            return Ok(new { _account.message, data = _account.account, _account.check });
+            return Ok(_account);
 
         }
 
@@ -107,7 +108,7 @@ namespace ScheduleLearnApi.Controllers
             var _account = await _accountService.UpdateEmailAsync(id, newEmail);
 
 
-            return Ok(new { _account.message, data = _account.account, _account.check });
+            return Ok(_account);
 
         }
 
@@ -132,7 +133,7 @@ namespace ScheduleLearnApi.Controllers
 
             var _account = await _accountService.GetAsync(id);
 
-            return Ok(new { _account.message, data = _account.account, _account.check });
+            return Ok(_account);
         }
 
         [HttpGet]
@@ -156,9 +157,19 @@ namespace ScheduleLearnApi.Controllers
 
             var _account = await _accountService.GetAsync();
 
-            return Ok(new { _account.message, data = _account.accounts, _account.check });
+            return Ok(_account);
         }
 
+        [HttpDelete]
+        [Route("api/delete_account")]
+        public IActionResult DeleteAccount(string id)
+        {
+            var _delete = _accountService.Delete(id);
+            return Ok(_delete);
+        }
+
+        
+        
         public class AccountViewModel
         {
             public string Email { get; set; }

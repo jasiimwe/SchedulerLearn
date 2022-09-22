@@ -20,8 +20,17 @@ namespace ScheduleLearnApi.Controllers
         public async Task<IActionResult> ShowDirectorsAsync()
         {
             var _director = await _directorService.GetAsync();
-            return Ok(new { _director.message, data = _director.directors, _director.check });
+            return Ok(_director);
         }
+
+        [HttpGet]
+        [Route("api/get_director")]
+        public async Task<IActionResult> GetDirectorAsync(string id)
+        {
+            var _getDirector = await _directorService.GetAsync(id);
+            return Ok(_getDirector);
+        }
+
 
         [HttpPost]
         [Route("add_director/")]
@@ -29,16 +38,24 @@ namespace ScheduleLearnApi.Controllers
         {
             var _director = await _directorService.AddAsync(director);
 
-            return Ok(new {_director.director, _director.message, _director.check});
+            return Ok(_director);
         }
 
-        [HttpPost]
+        [HttpPatch]
         [Route("update_director/")]
         public async Task<IActionResult> UpdateDirectorAsync(string name, DateTime dob, bool isDeleted)
         {
             var _director = await _directorService.UpdateAsync(name, dob, isDeleted);
 
-            return Ok(new { _director.director, _director.message, _director.check });
+            return Ok(_director);
+        }
+
+        [HttpDelete]
+        [Route("api/delete_director")]
+        public IActionResult DeleteDirector(string id)
+        {
+            var _deleteDirector = _directorService.Delete(id);
+            return Ok(_deleteDirector);
         }
     }
 }

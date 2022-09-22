@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ScheduleLearnApi.Models.Persistent;
 
@@ -10,16 +11,17 @@ using ScheduleLearnApi.Models.Persistent;
 namespace ScheduleLearnApi.Migrations
 {
     [DbContext(typeof(SchedulerContext))]
-    partial class SchedulerContextModelSnapshot : ModelSnapshot
+    [Migration("20220922072220_AddedNextOfKinModule")]
+    partial class AddedNextOfKinModule
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.8");
 
             modelBuilder.Entity("ScheduleLearnApi.Models.Account", b =>
                 {
-                    b.Property<string>("AccountId")
+                    b.Property<string>("Id")
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("Date")
@@ -34,14 +36,14 @@ namespace ScheduleLearnApi.Migrations
                     b.Property<string>("Password")
                         .HasColumnType("TEXT");
 
-                    b.HasKey("AccountId");
+                    b.HasKey("Id");
 
-                    b.ToTable("Account");
+                    b.ToTable("Accounts");
                 });
 
             modelBuilder.Entity("ScheduleLearnApi.Models.Director", b =>
                 {
-                    b.Property<string>("DirectorId")
+                    b.Property<string>("Id")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("AccountId")
@@ -61,14 +63,14 @@ namespace ScheduleLearnApi.Migrations
                     b.Property<bool>("isDeleted")
                         .HasColumnType("INTEGER");
 
-                    b.HasKey("DirectorId");
+                    b.HasKey("Id");
 
                     b.ToTable("Director");
                 });
 
             modelBuilder.Entity("ScheduleLearnApi.Models.Division", b =>
                 {
-                    b.Property<string>("DivisionId")
+                    b.Property<string>("Id")
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedOn")
@@ -82,14 +84,14 @@ namespace ScheduleLearnApi.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.HasKey("DivisionId");
+                    b.HasKey("Id");
 
                     b.ToTable("Division");
                 });
 
             modelBuilder.Entity("ScheduleLearnApi.Models.HealthCenter", b =>
                 {
-                    b.Property<string>("HealthCenterId")
+                    b.Property<string>("Id")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Address")
@@ -98,57 +100,20 @@ namespace ScheduleLearnApi.Migrations
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("DirectorId")
+                    b.Property<string>("Director")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
                         .HasColumnType("TEXT");
 
-                    b.HasKey("HealthCenterId");
+                    b.HasKey("Id");
 
                     b.ToTable("HealthCenter");
                 });
 
-            modelBuilder.Entity("ScheduleLearnApi.Models.HistoryShift", b =>
-                {
-                    b.Property<string>("HistoryShiftId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("EndDay")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<TimeSpan>("EndTime")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("ShiftId")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("StartDay")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<TimeSpan>("StartTime")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("WardId")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("HistoryShiftId");
-
-                    b.ToTable("HistoryShfit");
-                });
-
             modelBuilder.Entity("ScheduleLearnApi.Models.NextOfKin", b =>
                 {
-                    b.Property<string>("NextOfKinId")
+                    b.Property<string>("Id")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Contact")
@@ -174,50 +139,16 @@ namespace ScheduleLearnApi.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.HasKey("NextOfKinId");
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserID");
 
                     b.ToTable("Next of Kin");
                 });
 
-            modelBuilder.Entity("ScheduleLearnApi.Models.Shift", b =>
-                {
-                    b.Property<string>("ShiftId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("EndDay")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<TimeSpan>("EndTime")
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("StartDay")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<TimeSpan>("StartTime")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("WardId")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("ShiftId");
-
-                    b.ToTable("Shift");
-                });
-
             modelBuilder.Entity("ScheduleLearnApi.Models.User", b =>
                 {
-                    b.Property<string>("UserId")
+                    b.Property<string>("Id")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("AccountId")
@@ -265,7 +196,7 @@ namespace ScheduleLearnApi.Migrations
                     b.Property<string>("WardId")
                         .HasColumnType("TEXT");
 
-                    b.HasKey("UserId");
+                    b.HasKey("Id");
 
                     b.ToTable("User");
                 });
@@ -310,6 +241,17 @@ namespace ScheduleLearnApi.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Ward");
+                });
+
+            modelBuilder.Entity("ScheduleLearnApi.Models.NextOfKin", b =>
+                {
+                    b.HasOne("ScheduleLearnApi.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 #pragma warning restore 612, 618
         }

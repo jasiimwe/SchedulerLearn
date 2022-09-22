@@ -3,6 +3,8 @@ using ScheduleLearnApi.Models;
 using ScheduleLearnApi.Models.Interfaces;
 using ScheduleLearnApi.Models.Interfaces.Service;
 using ScheduleLearnApi.Models.Persistent;
+using ScheduleLearnApi.Models.Responses;
+using System.IO;
 using System.Security.Principal;
 
 namespace ScheduleLearnApi.Services
@@ -16,26 +18,24 @@ namespace ScheduleLearnApi.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<(Director director, string message, bool check)> AddAsync(Director director)
+        public async Task<ApiResponse<Director>> AddAsync(Director director)
         {
-            var isdirector = _unitOfWork.DirectorRepository.GetById(director.Id);
-            var message = "";
-            var _director = new Director();
-            var check = false;
+            var isdirector = _unitOfWork.DirectorRepository.GetById(director.DirectorId);
+
             if (isdirector != null)
-                message = "Director already exists";
+                return new ApiResponse<Director>("director already exists");
             else
             {
                 if (string.IsNullOrEmpty(director.Name))
-                    message = "Name is required";
+                    return new ApiResponse<Director>("Name already exists");
 
-                
 
-                _director = new Director
+
+                var _director = new Director
                 {
                     Name = director.Name,
                     Dob = director.Dob,
-                    Id = Guid.NewGuid().ToString("N"),
+                    DirectorId = Guid.NewGuid().ToString("N"),
                     isDeleted = false,
                     AccountId = director.AccountId,
                     CreatedOn = DateTime.UtcNow
@@ -45,79 +45,74 @@ namespace ScheduleLearnApi.Services
                 {
                     await _unitOfWork.DirectorRepository.InsertAsync(_director);
                     await _unitOfWork.CompleteAsync();
-                    check = true;
-                    message = "Succesfully created Director";
+                    return new ApiResponse<Director>(_director, "successfully added director");
                 }
                 catch (Exception)
                 {
-                    message = "Oops, something happened";
+                    return new ApiResponse<Director>("Oops, something happened");
                 }
             }
-            return (_director, message, check);
+            
         }
 
-        public (string message, bool check) Delete(Director director)
+        public async Task<ApiResponse<Director>> Delete(string id)
         {
-            var _director = _unitOfWork.DirectorRepository.GetById(director.Id);
-            var message = "";
-            var check = false;
+            var _director = await _unitOfWork.DirectorRepository.GetById(id);
+            
             if (_director is null)
-                message = "Oops, Director doesn't exist";
+                return new ApiResponse<Director>("director already exists");
             else
             {
                 try
                 {
-                    _unitOfWork.DirectorRepository.Delete(director);
-                    _unitOfWork.CompleteAsync();
-                    check = true;
-                    message = "Successfully deleted Director";
+                    _unitOfWork.DirectorRepository.Delete(_director);
+                    await _unitOfWork.CompleteAsync();
+                    return new ApiResponse<Director>("director deleted");
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    message = "Oops, Somehting went wrong";
+                    return new ApiResponse<Director>($"director already exist: {ex.Message}");
                 }
             }
-            return (message, check);
+            
         }
 
-        public async Task<(Director director, string message, bool check)> GetAsync(string id)
+        public async Task<ApiResponse<Director>> GetAsync(string id)
         {
             var _director = await _unitOfWork.DirectorRepository.GetById(id);
-            var message = "";
-            var check = false;
+            
             if (_director is null)
-                message = "Oops, Director doesn't exist";
+                return new ApiResponse<Director>("director doesn't exist");
             else
             {
-                check = true;
-                message = null;
+                return new ApiResponse<Director>(_director, "");
 
             }
-            return (_director, message, check);
+            
         }
 
-        public async Task<(IEnumerable<Director> directors, string message, bool check)> GetAsync()
+        public async Task<ApiResponse<IEnumerable<Director>>> GetAsync()
         {
-            IEnumerable<Director> _directors = new List<Director>();
-            var message = "";
+            
             try
             {
-                _directors = await _unitOfWork.DirectorRepository.GetAll();
+                var _directors = await _unitOfWork.DirectorRepository.GetAll();
+                if(!_directors.Any())
+                    return new ApiResponse<IEnumerable<Director>>("No data");
+                return new ApiResponse<IEnumerable<Director>>(_directors, "");
             }
-            catch(Exception)
+            catch(Exception ex)
             {
-                message = "Oops, Something went wrong";
+                return new ApiResponse<IEnumerable<Director>>($"Oops, something happened: {ex.Message}");
             }
-            return (_directors, message, _directors.Any());
+            
         }
 
-        public async Task<(Director director, string message, bool check)> UpdateAsync(string name, DateTime dob, bool isDeleted)
+        public async Task<ApiResponse<Director>> UpdateAsync(string name, DateTime dob, bool isDeleted)
         {
             var _director = await _unitOfWork.DirectorRepository.GetByName(name);
-            var message = "";
-            var check = false;
             if (_director is null)
-                message = "Director Doesn't exist";
+                return new ApiResponse<Director>("director doesn't exist");
             else
             {
                 
@@ -130,17 +125,16 @@ namespace ScheduleLearnApi.Services
                 
                 try
                 {
-                    _unitOfWork.DirectorRepository.Update(_director);
-                    
-                    check = true;
-                    message = "Succesfully updated Director";
+                    await _unitOfWork.CompleteAsync();
+                    return new ApiResponse<Director>("updated successfully");
+
                 }
                 catch (Exception)
                 {
-                    message = "Oops, Something happened while updating";
+                    return new ApiResponse<Director>("director doesn't exist");
                 }
             }
-            return (_director, message, check);
+           
         }
     }
 }

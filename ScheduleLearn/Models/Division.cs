@@ -7,7 +7,9 @@ namespace ScheduleLearnApi.Models
     public class Division
     {
         [Key]
-        public string Id { get; set; }
+        public string DivisionId { get; set; }
+
+        [ForeignKey("HealhCenterId")]
         public string HealthCenterId { get; set; }
         public string Name { get; set; }
 

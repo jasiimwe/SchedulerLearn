@@ -21,6 +21,9 @@ namespace ScheduleLearnApi.Models.Persistent
         public IWardRepository WardRepository => new WardRepository(_context);
         public IUserRepository UserRepository => new UserRepository(_context);
 
+        public INextOfKinRepository NextOfKinRepository => new NextOfKinRepository(_context);
+
+       
         public async Task CompleteAsync()
         {
             await _context.SaveChangesAsync();

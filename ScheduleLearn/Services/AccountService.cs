@@ -6,6 +6,7 @@ using ScheduleLearnApi.Models.Interfaces;
 using ScheduleLearnApi.Models.Interfaces.Repository;
 using ScheduleLearnApi.Models.Interfaces.Service;
 using ScheduleLearnApi.Models.Persistent;
+using ScheduleLearnApi.Models.Responses;
 using ScheduleLearnApi.Utils;
 using System.Reflection.Metadata.Ecma335;
 using System.Security.Principal;
@@ -22,14 +23,12 @@ namespace ScheduleLearnApi.Services
             _unit = unitOfWork;
         }
 
-        public (Account account, string message, bool check) Add(string email, string password, string isadmin)
+        public async Task<ApiResponse<Account>> Add(string email, string password, string isadmin)
         {
-            var check = false;
-            var message = "";
-            var account = new Account();
-            var isaccount = _unit.AccountRepository.GetByEmailAsync(email);
+           
+            var isaccount = await _unit.AccountRepository.GetByEmailAsync(email);
             if (isaccount != null)
-                message = "The account with this email already exists";
+                return new ApiResponse<Account>("account already exists");
             else
             {
                 try
@@ -38,9 +37,7 @@ namespace ScheduleLearnApi.Services
 
                     if (!checkBoll)
                     {
-                        account = null;
-                        message = "isadmin should be a proper boolean";
-                        check = false;
+                        return new ApiResponse<Account>("please submit a proper boolean");
                         //return (account, message, check);
                     }
 
@@ -49,91 +46,87 @@ namespace ScheduleLearnApi.Services
                         Date = DateTime.UtcNow,
                         Email = email,
                         Password = Support.GetMd5(password),
-                        Id = Guid.NewGuid().ToString(),
+                        AccountId = Guid.NewGuid().ToString(),
                         IsAdmin = IsAdmin
                     };
 
-                    _unit.AccountRepository.InsertAsync(_account);
-                    _unit.CompleteAsync();
-                    account = _account;
-                    check = true;
-                    message = "Successfully saved account";
-                    // return (account, message, check);
+                    await _unit.AccountRepository.InsertAsync(_account);
+                    await _unit.CompleteAsync();
+                    return new ApiResponse<Account>(_account, "successfully created account");
+                   
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    message = "Oops, Something went wrong, please try again";
+                    return new ApiResponse<Account>($"account already exists {ex.Message}");
                 }
 
             }
-            return (account, message, check);
+            
         }
 
-        public (string message, bool check) Delete(Account account)
+        public async Task<ApiResponse<Account>> Delete(string id)
         {
-            var _account = _unit.AccountRepository.GetById(account.Id);
-            var message = "";
-            var check = false;
+            var _account = await _unit.AccountRepository.GetById(id);
             if (_account is null)
-            {
-                message = "Oops, it appears this client doesn't exist";
-            }
+                return new ApiResponse<Account>("Account doesn't exists");
             else
             {
                 try
                 {
-                    _unit.AccountRepository.Delete(account);
-                    _unit.CompleteAsync();
-                    check = true;
-                    message = null;
+                    _unit.AccountRepository.Delete(_account);
+                    await _unit.CompleteAsync();
+                    return new ApiResponse<Account>("successfully deleted account");
+                    
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    message = "Oops, something went wrong, couldn't delete account";
+                    return new ApiResponse<Account>($"Oops, something happened: {ex.Message}");
                 }
             }
-            return (message, check);
+            
         }
 
-        public async Task<(Account account, string message, bool check)> GetAsync(string id)
+        public async Task<ApiResponse<Account>> GetAsync(string id)
         {
-            var _account = await _unit.AccountRepository.GetById(id);
-            var message = "";
-            var account = new Account();
-            var check = false;
-            if (_account is null)
-                message = "Oops, it appears that this is account doesn't exist";
-            else
+            try
             {
-                check = true;
-                message = null;
-                account = _account;
+                var _account = await _unit.AccountRepository.GetById(id);
+                if (_account is null)
+                    return new ApiResponse<Account>("account doen't exists");
+                else
+                {
+                    return new ApiResponse<Account>(_account, "");
+                }
+            }catch(Exception ex)
+            {
+                return new ApiResponse<Account>($"Oops, something happened: {ex.Message}");
             }
+            
 
-            return (_account, message, check);
+            
         }
 
-        public async Task<(IEnumerable<Account> accounts, string message, bool check)> GetAsync()
+        public async Task<ApiResponse<IEnumerable<Account>>> GetAsync()
         {
-            IEnumerable<Account> _accounts = new List<Account>();
-            var message = "";
+            
             
             try
             {
-                _accounts = await _unit.AccountRepository.GetAll();
+                var _accounts = await _unit.AccountRepository.GetAll();
+                if (_accounts.Any())
+                    return new ApiResponse<IEnumerable<Account>>("No record");
+                return new ApiResponse<IEnumerable<Account>>(_accounts, "");
                 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                message = "Oops, Something went wrong please try again later!";
-                
-                
+                return new ApiResponse<IEnumerable<Account>>($"Oops, something happened: {ex.Message} ");
             }
 
-            return (_accounts, message, _accounts.Any());
+            
         }
 
-        public async Task<(Account account, string message, bool check)> LoginAsync(string email, string password)
+        public async Task<ApiResponse<Account>> LoginAsync(string email, string password)
         {
             var account = new AccountViewModel
             {
@@ -141,13 +134,10 @@ namespace ScheduleLearnApi.Services
                 Password = password
             };
 
-            var message = "";
-            var check = false;
-            var data = new Account();
+            
             if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
             {
-                data = null;
-                message = "Please, fill in all fields";
+                return new ApiResponse<Account>("All fields are required");
             }
             else
             {
@@ -156,72 +146,64 @@ namespace ScheduleLearnApi.Services
                 
                 if (_getAccount is null)
                 {
-                    data = null;
-                    message = "Wrong username or password";
-                    
+                    return new ApiResponse<Account>("wrong username/password");
                 }
                 else
                 {
-                    data = _getAccount;
-                    message = "successfully logged in";
-                    check = true;
+                    return new ApiResponse<Account>(_getAccount, "Successfully Logged on");
                 }
             }
-            return (data, message, check);
+            
         }
 
-        public async Task<(Account account, string message, bool check)> UpdateEmailAsync(string id, string email)
+        public async Task<ApiResponse<Account>> UpdateEmailAsync(string id, string email)
         {
             var _account = await _unit.AccountRepository.GetById(id);
-            var message = "";
-            var check = false;
+
             if (_account is null)
-                message = "Account doesn't exists";
+                return new ApiResponse<Account>("account doesn't exist");
             else
             {
                 _account.Email = email;
 
                 try
                 {
-                    _unit.AccountRepository.Update(_account);
-                    //await _unit.CompleteAsync();
+                    //_unit.AccountRepository.Update(_account);
+                    await _unit.CompleteAsync();
 
-                    check = true;
-                    message = "Successfully Updated Account";
+                    return new ApiResponse<Account>("successfully updated email");
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    message = "Oops, something went wrong couldn't please try again";
+                    return new ApiResponse<Account>($"Oops, something happened: {ex.Message}");
                 }
             }
-            return (_account, message, check);
+            
         }
 
-        public async Task<(Account account, string message, bool check)> UpdatePasswordAsync(string id, string password)
+        public async Task<ApiResponse<Account>> UpdatePasswordAsync(string id, string password)
         {
             var _account = await _unit.AccountRepository.GetById(id);
-            var message = "";
-            var check = false;
+
             if (_account is null)
-                message = "Account doesn't exists";
+                return new ApiResponse<Account>("Account doesn't exist");
             else
             {
                 _account.Password = Support.GetMd5(password);
 
                 try
                 {
-                    _unit.AccountRepository.Update(_account);
-                    //await _unit.CompleteAsync();
+                    //_unit.AccountRepository.Update(_account);
+                    await _unit.CompleteAsync();
 
-                    check = true;
-                    message = "Successfully Updated Account";
+                    return new ApiResponse<Account>("updated account");
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    message = "Oops, something went wrong couldn't please try again";
+                    return new ApiResponse<Account>($"Oops, something happened{ex.Message}");
                 }
             }
-            return (_account, message, check);
+            
         }
     }
 }

@@ -19,6 +19,7 @@ builder.Services.AddScoped<IHealthCenter, HealthCenterService>();
 builder.Services.AddScoped<IDivision, DivisionService>();
 builder.Services.AddScoped<IWard, WardService>();
 builder.Services.AddScoped<IUser, UserService>();
+builder.Services.AddScoped<INextOfKin, NextOfKinService>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddDbContext<SchedulerContext>(opt => opt.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
